@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <title>SignIn</title>
+</head>
+<body>
+    <script src="scripts/script.js"></script>
+    SignIn
+    <div class="signin-box">
+        <form action="/validate" method="post">
+            <label for="uid">Enter your username or email:</label>
+            <input name="uid" id="uid" type="text" autofocus><br>
+
+            <label for="password">Enter your password:</label>
+            <input name="password" id="password" type="password"><br>
+
+            <button type="submit">Sign In</button>
+        </form>
+        <button type="button" onclick="authorise()">Continue with Google Account</button><br>
+        <small>Don't have an account?</small>
+        <button type="button" onclick="location.href='/signup'">Sign Up</button>
+    </div>
+</body>
+</html>
