@@ -11,14 +11,20 @@
 
 <body>
     <script src="scripts/script.js"></script>
-    Welcome to TooDoo
+    <p>Welcome to TooDoo, <%= user['user_name'] %>
+    </p>
     <form action="/create" method="post">
         <textarea name="note" id="note" placeholder="Write a note" cols="30" rows="10"></textarea><br>
         <input type="submit" value="New">
     </form>
     <% for (let note in notes){ %>
-        <%= notes[note] %><br>
-            <% }; %>
+        <p>
+            <%= notes[note]['body'] %>
+        </p>
+        <form action="/delete/<%= notes[note]['todo_id'] %>" method="post">
+            <button type="submit">Delete</button><br>
+        </form>
+        <% }; %>
 </body>
 
 </html>

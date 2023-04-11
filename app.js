@@ -54,7 +54,7 @@ app.get("/signin", (req, res) => {
   res.render("signin");
 });
 
-app.get("/signup", (req, res) => {
+app.get("/signup", async (req, res) => {
   res.render("signup");
 });
 
@@ -71,7 +71,8 @@ app.post("/validate", async (req, res) => {
       password: hashedPassword,
     });
     await user.save();
-    req.session.user = { email_id };
+    const user_id = user.user_id;
+    req.session.user = { user_id };
     return res.redirect("notes");
   } catch (err) {
     req.flash("message", "Account with that email already exists");
@@ -83,7 +84,7 @@ app.post("/authorise", async (req, res) => {
   const email_id = req.body.email;
   const password = req.body.password;
   try {
-    const user = await User.findOne({ email_id });
+    const user = await User.findOne({ email_id: email_id });
     if (!user) {
       req.flash("message", "Invalid email or password");
       return res.redirect("signin");
@@ -93,7 +94,8 @@ app.post("/authorise", async (req, res) => {
       req.flash("message", "Invalid email or password");
       return res.redirect("signin");
     }
-    req.session.user = { email_id };
+    const user_id = user.user_id;
+    req.session.user = { user_id };
     return res.redirect("notes");
   } catch (err) {
     req.flash("message", "Server Error");
@@ -101,9 +103,14 @@ app.post("/authorise", async (req, res) => {
   }
 });
 
-app.post("/create", (req, res) => {
+app.post("/create", async (req, res) => {
   if (req.session.user) {
-    console.log(req.body.note);
+    const user_id = req.session.user;
+    const note = new ToDo({
+      body: req.body.note,
+      user_id: user_id.user_id,
+    });
+    await note.save();
     return res.redirect("notes");
   } else {
     req.flash("message", "Please login to use TooDoo");
@@ -111,11 +118,23 @@ app.post("/create", (req, res) => {
   }
 });
 
-app.get("/notes", (req, res) => {
+app.post("/delete/:id", async (req, res) => {
+  const todoId = req.params.id;
+  try {
+    await ToDo.deleteOne({ todo_id: todoId });
+    return res.redirect("../notes");
+  } catch (err) {
+    req.flash("message", "Failed to delete note");
+    return res.redirect("../notes");
+  }
+})
+
+app.get("/notes", async (req, res) => {
   if (req.session.user) {
-    return res.render("notes", {
-      notes: { note1: "Hello there", note2: "Hello again" },
-    });
+    const user_id = req.session.user;
+    const user = await User.findOne({ user_id: user_id.user_id });
+    const notes = await ToDo.find({ user_id: user_id.user_id }).lean();
+    return res.render("notes", { user, notes });
   } else {
     req.flash("message", "Please login to use TooDoo");
     return res.redirect("/");
