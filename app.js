@@ -33,7 +33,7 @@ app.use(flash());
 app.set("view engine", "ejs");
 
 const dbURL =
-  "mongodb+srv://Admin:qo76QttAqZfRDypE@cluster0.7efz7qz.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://Admin:<password>@cluster0.7efz7qz.mongodb.net/?retryWrites=true&w=majority";
 mongoose
   .connect(dbURL, {
     useNewUrlParser: true,
